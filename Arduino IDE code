@@ -1,0 +1,58 @@
+#define WATERPUMP 13 //pump connected to pin 13
+#define SENSOR  A1 //soil sensor digital pin connected to pin 8
+#define LDR  A0//light dependent resistor is connected to A0
+#define PORTNUMBER  9600 // opens serial port, sets data rate to 9600 bps
+
+void setup()
+{
+   Serial.begin(PORTNUMBER); 
+   pinMode(WATERPUMP,OUTPUT); //Set pin 13 as OUTPUT pin
+   pinMode(SENSOR,INPUT); //Set pin 8 as input pin, to receive data from Soil moisture sensor.
+   pinMode(LDR,INPUT);
+   digitalWrite(WATERPUMP,LOW);//pump should be off initally
+
+}
+
+void loop() 
+{ 
+  
+  int val = analogRead(SENSOR); //stores the value received from Soil moisture sensor in variable val 
+  int LDRValue=analogRead(LDR);//stores the value received from LDR in variable LDRValue 
+  
+  if(LDRValue >= 20)
+  {
+    // if its dark then doesn't matter whether moisture is low or high, pump should not be off
+     Serial.print("its bright, so pump will on. LDR value is: ");
+     Serial.println(LDRValue);//Print LDR value
+
+  
+    if( val >= 750)
+   {
+      
+     Serial.print("its not dark and moisture is low so pump should turn on, LDR value is: ");
+     Serial.println(LDRValue);//print LDR value
+     Serial.print("\n moisture value is: ");
+     Serial.println(val);//print soil moisture sensor value
+     digitalWrite(WATERPUMP,HIGH); //pump is on
+    }
+    if( val<=749)
+    {
+      Serial.print("its not dark and moisture is high so pump will off, LDR value is: ");
+      Serial.println(LDRValue);//print LDR value 
+      Serial.print("\n moisture value is: ");
+      Serial.println(val);//print soil moisture sensor 
+      digitalWrite(WATERPUMP,LOW);//and pump is off
+    }
+   }
+   else
+   {
+    Serial.print("its dark so pump will be off whether moisture is high or low");
+    Serial.print("\n LDR value is: ");
+    Serial.println(LDRValue);//Print LDR value
+    Serial.print("\n moisture value is: ");
+    Serial.println(val);//print soil moisture sensor value
+    digitalWrite(WATERPUMP,LOW); //pump goes off
+   }
+  delay(2000); //Wait for few second and then continue the loop.
+
+  }
